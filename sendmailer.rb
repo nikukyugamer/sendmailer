@@ -34,7 +34,7 @@ class Sendmailer
     file_content = File.open(MAIL_CONTENT) do |file|
       file.read
     end
-    mail_bopdy_erb = ERB.new(file_content)
+    mail_body_erb = ERB.new(file_content)
     mail_body_erb.result(binding)
   end
 
