@@ -8,26 +8,25 @@ class Sendmailer
   require 'time'
   require 'pp'
 
-  ADDRESS_FILE        = 'address.yml'.freeze
   TO_ADDRESS_GROUP    = 'development'.freeze
   ATTACHMENT_FILENAME = 'my_image.jpg'.freeze
   ERB_MAIL_CONTENT    = 'my_content.erb'.freeze
 
   def initialize
     @mail_server     = YAML.load_file('config/mail_server.yml')
-    @to_address      = YAML.load_file("config/address/#{ADDRESS_FILE}")[TO_ADDRESS_GROUP].join(', ')
+    @to_address      = YAML.load_file('config/to_address.yml')[TO_ADDRESS_GROUP].join(', ')
     @attachment_file = "attachment_file/#{ATTACHMENT_FILENAME}"
   end
 
   def options
     {
-      address: @mail_server['sender']['smtp_address'],
-      port: @mail_server['sender']['port'],
-      domain: @mail_server['sender']['domain'],
-      user_name: @mail_server['sender']['user_name'],
-      password: @mail_server['sender']['password'],
-      authentication: @mail_server['sender']['authentication'],
-      enable_starttls_auto: @mail_server['sender']['enable_starttls_auto'],
+      address: @mail_server['smtp_address'],
+      port: @mail_server['port'],
+      domain: @mail_server['domain'],
+      user_name: @mail_server['user_name'],
+      password: @mail_server['password'],
+      authentication: @mail_server['authentication'],
+      enable_starttls_auto: @mail_server['enable_starttls_auto'],
     }
   end
 
