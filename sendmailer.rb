@@ -43,7 +43,7 @@ class Sendmailer
       from      'from_name@example.com' # TODO: ここは外に出す
       to        @to_address
       subject   'Hello, Mailer!' # TODO: ここは外に出す
-      body      mail_content
+      body      mail_body
       add_file  filename: "#{ATTACHMENT_FILENAME}", content: File.read(@attachment_file)
     end
   end
