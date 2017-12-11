@@ -49,7 +49,7 @@ class Sendmailer
   end
 
   def sendmail(mail)
-    mail.delivery_method :smtp, @options
+    mail.delivery_method :smtp, options
     mail.charset = 'UTF-8'
     mail.deliver
   end
