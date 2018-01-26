@@ -1,56 +1,41 @@
-class Sendmailer
-  require 'yaml'
+class SendMailer
   require 'mail'
-  require 'net/http'
-  require 'json'
-  require 'erb'
-  require 'date'
-  require 'time'
-  require 'pp'
+  require 'yaml'
 
-  TO_ADDRESS_GROUP    = 'development'.freeze
-  ATTACHMENT_FILENAME = 'my_image.jpg'.freeze
-  ERB_MAIL_CONTENT    = 'my_content.erb'.freeze
+  MAIL_SERVER_CONFIG  = 'config/mail_server.yml'.freeze
+  ADDRESS_BOOK_FILE   = 'config/address_book.yml'.freeze
 
   def initialize
-    @mail_server     = YAML.load_file('config/mail_server.yml')
-    @to_address      = YAML.load_file('config/to_address.yml')[TO_ADDRESS_GROUP].join(', ')
-    @attachment_file = "attachment_file/#{ATTACHMENT_FILENAME}"
-  end
-
-  def options
-    {
-      address: @mail_server['smtp_address'],
-      port: @mail_server['port'],
-      domain: @mail_server['domain'],
-      user_name: @mail_server['user_name'],
-      password: @mail_server['password'],
-      authentication: @mail_server['authentication'],
-      enable_starttls_auto: @mail_server['enable_starttls_auto'],
+    @server = {
+      address: mail_server['smtp_address'],
+      port: mail_server['port'],
+      domain: mail_server['domain'],
+      user_name: mail_server['user_name'],
+      password: mail_server['password'],
+      authentication: mail_server['authentication'],
+      enable_starttls_auto: mail_server['enable_starttls_auto'],
     }
   end
 
-  def mail_body
-    file_content = File.open(ERB_MAIL_CONTENT) do |file|
-      file.read
-    end
-    mail_body_erb = ERB.new(file_content)
-    mail_body_erb.result(binding)
+  def mail_server
+    YAML.load_file(MAIL_SERVER_CONFIG)
   end
 
-  def mail
-    Mail.new do
-      from      'from_name@example.com' # TODO: ここは外に出す
-      to        @to_address
-      subject   'Hello, Mailer!' # TODO: ここは外に出す
-      body      mail_body
-      add_file  filename: "#{ATTACHMENT_FILENAME}", content: File.read(@attachment_file)
-    end
+  def to_address(address_group)
+    YAML.load_file(ADDRESS_BOOK_FILE)[address_group].join(", ")
   end
 
-  def sendmail(mail)
-    mail.delivery_method :smtp, options
-    mail.charset = 'UTF-8'
+  def send_mail(from:, address_group:, subject: '', body: '')
+    mail = Mail.new
+    mail.charset  = 'UTF-8'
+    mail.delivery_method(:smtp, @server)
+
+    mail.from     = from
+    mail.to       = to_address(address_group)
+    mail.subject  = subject
+    mail.body     = body
+    # mail.add_file = { filename: 'foobar.jpg', content: File.read('/path/to/hoge.jpg') }
+
     mail.deliver
   end
 end

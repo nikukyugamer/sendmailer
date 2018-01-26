@@ -1,8 +1,12 @@
-# sendmailer
-easy simple mailer to send by Ruby
+# Sendmailer
+- easy simple mailer to send by Ruby
 
-# perhaps
-is it `reinventing the wheel`?
+# Feature
+- can use `address_book`
+    - is it `reinventing the wheel`?
+
+# Perhaps
+- is it `reinventing the wheel`?
 
 # LICENSE
 [MIT LICENSE](/LICENSE)
