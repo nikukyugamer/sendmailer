@@ -25,7 +25,7 @@ class SendMailer
     YAML.load_file(ADDRESS_BOOK_FILE)[address_group].join(", ")
   end
 
-  def send_mail(from:, address_group:, subject: '', body: '')
+  def send_mail(from:, address_group:, subject: '', body: '', attachment_file: [])
     mail = Mail.new
     mail.charset  = 'UTF-8'
     mail.delivery_method(:smtp, @server)
@@ -34,7 +34,12 @@ class SendMailer
     mail.to       = to_address(address_group)
     mail.subject  = subject
     mail.body     = body
-    # mail.add_file = { filename: 'foobar.jpg', content: File.read('/path/to/hoge.jpg') }
+
+    unless attachment_file.empty?
+      attachment_file.each do |file|
+        mail.add_file(file)
+      end
+    end
 
     mail.deliver
   end
